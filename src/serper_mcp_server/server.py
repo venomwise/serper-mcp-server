@@ -9,7 +9,7 @@ from mcp.types import Tool, TextContent, ImageContent, EmbeddedResource
 
 load_dotenv()
 
-from .core import google, scape, SERPER_API_KEY
+from .core import google, scape, google_multi_region, SERPER_API_KEY
 from .enums import SerperTools
 from .schemas import (
     SearchRequest,
@@ -19,7 +19,8 @@ from .schemas import (
     LensRequest,
     AutocorrectRequest,
     PatentsRequest,
-    WebpageRequest
+    WebpageRequest,
+    MultiRegionSearchRequest,
 )
 
 server = Server("Serper")
@@ -61,6 +62,12 @@ async def list_tools() -> List[Tool]:
         inputSchema=WebpageRequest.model_json_schema(),
     ))
 
+    tools.append(Tool(
+        name=SerperTools.GOOGLE_SEARCH_MULTI_REGION,
+        description="Multi-region Google search with preset region groups. Results are grouped by region for comparison. It is recommended to translate the query into the target region's language before calling, and pass translations via the `translations` parameter. Regions without translations will use the original query.",
+        inputSchema=MultiRegionSearchRequest.model_json_schema(),
+    ))
+
     logger.debug("工具列表生成完成，数量：%d", len(tools))
     return tools
 
@@ -78,6 +85,13 @@ async def call_tool(name: str, arguments: dict[str, Any]) -> Sequence[TextConten
             request = WebpageRequest(**arguments)
             result = await scape(request)
             logger.debug("网页抓取完成")
+            return [TextContent(text=json.dumps(result, indent=2), type="text")]
+
+        if name == SerperTools.GOOGLE_SEARCH_MULTI_REGION.value:
+            logger.debug("识别为多地区搜索工具")
+            request = MultiRegionSearchRequest(**arguments)
+            result = await google_multi_region(request)
+            logger.debug("多地区搜索完成")
             return [TextContent(text=json.dumps(result, indent=2), type="text")]
 
         if not SerperTools.has_value(name):

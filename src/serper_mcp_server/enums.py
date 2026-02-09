@@ -14,6 +14,7 @@ class SerperTools(StrEnum):
     GOOGLE_SEARCH_SCHOLAR = "google_search_scholar"
     GOOGLE_SEARCH_PATENTS = "google_search_patents"
     GOOGLE_SEARCH_AUTOCOMPLETE = "google_search_autocomplete"
+    GOOGLE_SEARCH_MULTI_REGION = "google_search_multi_region"
     WEBPAGE_SCRAPE = "webpage_scrape"
 
     @classmethod

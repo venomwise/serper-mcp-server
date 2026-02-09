@@ -3,6 +3,38 @@ from pydantic import BaseModel, Field
 
 from .enums import ReviewSortBy
 
+# 多地区搜索预设配置
+REGION_CONFIGS = {
+    "asia": [
+        {"gl": "cn", "hl": "zh-CN"},
+        {"gl": "jp", "hl": "ja"},
+        {"gl": "kr", "hl": "ko"},
+        {"gl": "sg", "hl": "en"},
+        {"gl": "in", "hl": "en"},
+    ],
+    "europe": [
+        {"gl": "uk", "hl": "en"},
+        {"gl": "de", "hl": "de"},
+        {"gl": "fr", "hl": "fr"},
+        {"gl": "it", "hl": "it"},
+        {"gl": "es", "hl": "es"},
+    ],
+    "americas": [
+        {"gl": "us", "hl": "en"},
+        {"gl": "ca", "hl": "en"},
+        {"gl": "br", "hl": "pt-BR"},
+        {"gl": "mx", "hl": "es"},
+        {"gl": "ar", "hl": "es"},
+    ],
+    "global": [
+        {"gl": "us", "hl": "en"},
+        {"gl": "cn", "hl": "zh-CN"},
+        {"gl": "uk", "hl": "en"},
+        {"gl": "de", "hl": "de"},
+        {"gl": "jp", "hl": "ja"},
+    ],
+}
+
 
 class BaseRequest(BaseModel):
     q: str = Field(..., description="The query to search for")
@@ -121,4 +153,25 @@ class WebpageRequest(BaseModel):
         "false",
         pattern=r"^(true|false)$",
         description="Include markdown in the response (boolean value as string: 'true' or 'false')",
+    )
+
+
+class MultiRegionSearchRequest(BaseModel):
+    q: str = Field(..., description="The query to search for (used as default for regions without translations)")
+    preset: str = Field(
+        ...,
+        pattern=r"^(asia|europe|americas|global)$",
+        description="Preset region group: asia, europe, americas, or global",
+    )
+    translations: Optional[dict[str, str]] = Field(
+        None,
+        description="Optional translations mapping language code to translated query, e.g. {'zh-CN': '人工智能', 'ja': '人工知能'}",
+    )
+    num: str = Field(
+        "10",
+        pattern=r"^([1-9]|[1-9]\d|100)$",
+        description="The number of results to return per region, max is 100 (integer value as string)",
+    )
+    tbs: Optional[str] = Field(
+        None, description="The time period to search in, e.g. d, w, m, y"
     )

@@ -25,3 +25,7 @@ Thumbs.db
 
 # OS Specific
 ._*
+
+# ai
+CLAUDE.md
+docs/
