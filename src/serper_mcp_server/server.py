@@ -44,10 +44,10 @@ google_request_map = {
 
 # 意图到工具的映射关系
 INTENT_TO_TOOL_MAP = {
-    "general": SerperTools.GOOGLE_SEARCH,
+    "general": SerperTools.GOOGLE_SEARCH_MULTI_REGION,  # 强制使用多地区搜索
     "images": SerperTools.GOOGLE_SEARCH_IMAGES,
     "videos": SerperTools.GOOGLE_SEARCH_VIDEOS,
-    "news": SerperTools.GOOGLE_SEARCH_NEWS,
+    "news": SerperTools.GOOGLE_SEARCH_MULTI_REGION,  # 强制使用多地区搜索
     "maps": SerperTools.GOOGLE_SEARCH_MAPS,
     "places": SerperTools.GOOGLE_SEARCH_PLACES,
     "shopping": SerperTools.GOOGLE_SEARCH_SHOPPING,
@@ -106,19 +106,24 @@ async def call_tool(name: str, arguments: dict[str, Any]) -> Sequence[TextConten
             # 处理特殊工具的参数转换
             if target_tool == SerperTools.GOOGLE_SEARCH_MULTI_REGION:
                 # 多地区搜索需要特殊处理
+                # 为 general 和 news intent 使用中美双地区预设
+                if auto_request.intent in ["general", "news"]:
+                    preset = "us_cn_dual"
+                else:
+                    preset = "global"  # 其他情况使用全球预设
+
                 multi_region_args = {
                     "q": auto_request.q,
-                    "preset": "global",  # 默认使用全球预设
+                    "preset": preset,
                     "num": auto_request.num,
+                    "translations": auto_request.translations,  # 现在是必需参数
                 }
                 if auto_request.tbs:
                     multi_region_args["tbs"] = auto_request.tbs
-                if auto_request.translations:
-                    multi_region_args["translations"] = auto_request.translations
 
                 request = MultiRegionSearchRequest(**multi_region_args)
                 result = await google_multi_region(request)
-                logger.debug("多地区搜索路由完成")
+                logger.debug("多地区搜索路由完成，使用预设：%s", preset)
                 return [TextContent(text=json.dumps(result, indent=2), type="text")]
 
             # 构建目标工具的请求参数

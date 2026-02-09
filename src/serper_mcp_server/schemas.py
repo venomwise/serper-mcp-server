@@ -33,6 +33,10 @@ REGION_CONFIGS = {
         {"gl": "de", "hl": "de"},
         {"gl": "jp", "hl": "ja"},
     ],
+    "us_cn_dual": [  # 新增中美双地区预设
+        {"gl": "us", "hl": "en"},
+        {"gl": "cn", "hl": "zh-CN"},
+    ],
 }
 
 
@@ -160,12 +164,12 @@ class MultiRegionSearchRequest(BaseModel):
     q: str = Field(..., description="The query to search for (used as default for regions without translations)")
     preset: str = Field(
         ...,
-        pattern=r"^(asia|europe|americas|global)$",
-        description="Preset region group: asia, europe, americas, or global",
+        pattern=r"^(asia|europe|americas|global|us_cn_dual)$",
+        description="Preset region group: asia, europe, americas, global, or us_cn_dual",
     )
-    translations: Optional[dict[str, str]] = Field(
-        None,
-        description="Optional translations mapping language code to translated query, e.g. {'zh-CN': '人工智能', 'ja': '人工知能'}",
+    translations: dict[str, str] = Field(
+        ...,
+        description="Required translations mapping language code to translated query, e.g. {'zh-CN': '人工智能', 'ja': '人工知能'}",
     )
     num: str = Field(
         "10",
@@ -206,7 +210,7 @@ class AutoSearchRequest(BaseModel):
     tbs: Optional[str] = Field(
         None, description="The time period to search in, e.g. d, w, m, y"
     )
-    translations: Optional[dict[str, str]] = Field(
-        None,
-        description="Optional translations mapping language code to translated query for multi-region searches, e.g. {'zh-CN': '7年Java高级开发工程师平均薪资', 'en': '7 years Java senior developer average salary', 'de': '7 Jahre Java Senior-Entwickler Durchschnittsgehalt', 'ja': '7年Javaシニア開発者平均給与'}",
+    translations: dict[str, str] = Field(
+        ...,
+        description="Required translations mapping language code to translated query for multi-region searches, e.g. {'zh-CN': '7年Java高级开发工程师平均薪资', 'en': '7 years Java senior developer average salary', 'de': '7 Jahre Java Senior-Entwickler Durchschnittsgehalt', 'ja': '7年Javaシニア開発者平均給与'}",
     )

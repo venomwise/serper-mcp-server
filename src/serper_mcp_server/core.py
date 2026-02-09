@@ -125,7 +125,7 @@ async def google_multi_region(request: MultiRegionSearchRequest) -> Dict[str, An
     connector = aiohttp.TCPConnector(ssl=ssl_context)
     timeout = aiohttp.ClientTimeout(total=AIOHTTP_TIMEOUT)
 
-    translations = request.translations or {}
+    translations = request.translations
     results: Dict[str, Any] = {}
     failed_regions: List[str] = []
 
