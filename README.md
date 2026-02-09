@@ -122,6 +122,12 @@ cd serper-mcp-server
 npx @modelcontextprotocol/inspector uv run serper-mcp-server -e SERPER_API_KEY=<the key>
 ```
 
+You can also write server logs to a file by setting `SERPER_LOG_FILE` (optional):
+
+```bash
+SERPER_LOG_FILE=/tmp/serper-mcp.log SERPER_LOG_LEVEL=DEBUG uv run serper-mcp-server
+```
+
 
 ## License
 
