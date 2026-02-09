@@ -3,6 +3,7 @@ from enum import StrEnum
 
 class SerperTools(StrEnum):
     GOOGLE_SEARCH = "google_search"
+    GOOGLE_SEARCH_AUTO = "google_search_auto"
     GOOGLE_SEARCH_IMAGES = "google_search_images"
     GOOGLE_SEARCH_VIDEOS = "google_search_videos"
     GOOGLE_SEARCH_PLACES = "google_search_places"

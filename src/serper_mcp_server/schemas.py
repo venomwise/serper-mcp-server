@@ -175,3 +175,38 @@ class MultiRegionSearchRequest(BaseModel):
     tbs: Optional[str] = Field(
         None, description="The time period to search in, e.g. d, w, m, y"
     )
+
+
+class AutoSearchRequest(BaseModel):
+    q: str = Field(..., description="The query to search for")
+    intent: str = Field(
+        "general",
+        pattern=r"^(general|images|videos|news|maps|places|shopping|scholar|patents|reviews|lens|autocomplete|multi_region)$",
+        description="Search intent to determine which tool to route to. Options: general, images, videos, news, maps, places, shopping, scholar, patents, reviews, lens, autocomplete, multi_region",
+    )
+    gl: Optional[str] = Field(
+        None, description="The country to search in, e.g. us, uk, ca, au, etc."
+    )
+    hl: Optional[str] = Field(
+        None, description="The language to search in, e.g. en, es, fr, de, etc."
+    )
+    location: Optional[str] = Field(
+        None, description="The location to search in, e.g. San Francisco, CA, USA"
+    )
+    num: str = Field(
+        "10",
+        pattern=r"^([1-9]|[1-9]\d|100)$",
+        description="The number of results to return, max is 100 (integer value as string)",
+    )
+    page: Optional[str] = Field(
+        "1",
+        pattern=r"^[1-9]\d*$",
+        description="The page number to return, first page is 1 (integer value as string)",
+    )
+    tbs: Optional[str] = Field(
+        None, description="The time period to search in, e.g. d, w, m, y"
+    )
+    translations: Optional[dict[str, str]] = Field(
+        None,
+        description="Optional translations mapping language code to translated query for multi-region searches, e.g. {'zh-CN': '7年Java高级开发工程师平均薪资', 'en': '7 years Java senior developer average salary', 'de': '7 Jahre Java Senior-Entwickler Durchschnittsgehalt', 'ja': '7年Javaシニア開発者平均給与'}",
+    )

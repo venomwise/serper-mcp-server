@@ -91,6 +91,10 @@ async def _search_single_region(
         'Content-Type': 'application/json'
     }
 
+    # 打印搜索请求信息
+    payload_summary = _summarize_payload(payload)
+    logger.debug("地区 %s 搜索请求：%s，参数：%s", gl, url, payload_summary)
+
     start_time = time.monotonic()
     try:
         async with session.post(url, headers=headers, json=payload) as response:
